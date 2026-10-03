@@ -1,1 +1,1 @@
-# EventApp
+# EventsApp
