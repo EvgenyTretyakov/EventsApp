@@ -5,10 +5,10 @@ using System.Reflection;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddScoped<IEventService, EventService>();
+builder.Services.AddSingleton<IEventService, EventService>();
 
 builder.Services.AddControllers();
-//builder.Services.AddSwaggerGen();
+
 builder.Services.AddSwaggerGen(options =>
 {
     // Путь к XML-файлу с документацией

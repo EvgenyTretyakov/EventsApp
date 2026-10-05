@@ -11,6 +11,6 @@ namespace EventsWebApplication.Services.Interfaces
         Event? GetEvent(Guid id);
         void Add(Event newEvnt);
         void Update(Guid id, Event evnt);
-        void Delete(Guid id);
+        bool Delete(Guid id);
     }
 }

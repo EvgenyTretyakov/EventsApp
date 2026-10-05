@@ -8,7 +8,7 @@ using EventsWebApplication.Services.Interfaces;
 
 namespace EventsWebApplication.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class EventsController : ControllerBase
     {
@@ -23,15 +23,9 @@ namespace EventsWebApplication.Controllers
         /// Метод возвращает список событий
         /// </summary>
         [HttpGet]
-        public ApiResult<List<Event>> GetAllEvents()
+        public ActionResult<List<Event>> GetAllEvents()
         {
-            return new ApiResult<List<Event>>
-            {
-                Data = _eventService.GetAll(),
-                Success = true,
-                StatusCode = HttpStatusCode.OK,
-                Message = "Получаем все события"
-            };
+            return _eventService.GetAll();
         }
 
         /// <summary>
@@ -39,28 +33,17 @@ namespace EventsWebApplication.Controllers
         /// </summary>
         /// <param name="id">Параметр идентификатора события</param>
         [HttpGet("{id:Guid}")]
-        public ApiBaseResult GetEventById(Guid id)
+        public IActionResult GetEventById(Guid id)
         {
             var evnt = _eventService.GetEvent(id);
 
             if (evnt != null)
             {
-                return new ApiResult<Event>
-                {
-                    Data = evnt,
-                    Success = true,
-                    StatusCode = HttpStatusCode.OK,
-                    Message = "Получаем событие по id из списка"
-                };
+                return Ok(evnt);
             }
             else
             {
-                return new ApiResult
-                {
-                    Success = false,
-                    StatusCode = HttpStatusCode.NotFound,
-                    Message = "Не удалось найти событие по id"
-                };
+                return NotFound();
             }
         }
 
@@ -69,27 +52,17 @@ namespace EventsWebApplication.Controllers
         /// </summary>
         /// <param name="evnt">Параметр объект события</param>
         [HttpPost]
-        public ApiResult AddEvent([FromBody] Event evnt)
+        public IActionResult AddEvent([FromBody] Event evnt)
         {
             try
             {
                 _eventService.Add(evnt);
 
-                return new ApiResult
-                {
-                    Success = true,
-                    StatusCode = HttpStatusCode.Created,
-                    Message = "Добавлено событие в коллекцию"
-                };
+                return Created();
             }
             catch (Exception ex)
             {
-                return new ApiResult
-                {
-                    Success = false,
-                    StatusCode = HttpStatusCode.NotFound,
-                    Message = $"Не удалось добавить событие. Ошибка:{ex.Message}"
-                };
+                return BadRequest(ex.Message);
             }
         }
 
@@ -99,42 +72,18 @@ namespace EventsWebApplication.Controllers
         /// <param name="id">Параметр идентификатор события</param>
         /// <param name="evnt">Параметр объект события</param>
         [HttpPut("{id:Guid}")]
-        public ApiResult UpdateEvent(Guid id, [FromBody] Event evnt)
+        public IActionResult UpdateEvent(Guid id, [FromBody] Event evnt)
         {
-            var existEvnt = _eventService.GetEvent(id);
-
-            if (existEvnt != null)
+            try
             {
-                try
-                {
-                    _eventService.Update(id, evnt);
-                }
-                catch (Exception ex)
-                {
-                    return new ApiResult
-                    {
-                        Success = false,
-                        StatusCode = HttpStatusCode.BadRequest,
-                        Message = $"Не удалось обновить событие. Ошибка:{ex.Message}"
-                    };
-                }
-
-                return new ApiResult
-                {
-                    Success = true,
-                    StatusCode = HttpStatusCode.NoContent,
-                    Message = "Данные события обновлены."
-                };
+                _eventService.Update(id, evnt);
             }
-            else
+            catch (Exception ex)
             {
-                return new ApiResult
-                {
-                    Success = false,
-                    StatusCode = HttpStatusCode.NotFound,
-                    Message = "Событие не найдено."
-                };
+                return BadRequest(ex.Message);
             }
+
+            return NoContent();
         }
 
         /// <summary>
@@ -142,29 +91,15 @@ namespace EventsWebApplication.Controllers
         /// </summary>
         /// <param name="id">Параметр идентификатор события</param>
         [HttpDelete("{id:Guid}")]
-        public ApiResult DeleteEvnt(Guid id)
+        public IActionResult DeleteEvnt(Guid id)
         {
-            var existEvnt = _eventService.GetEvent(id);
-
-            if (existEvnt != null)
+            if (_eventService.Delete(id))
             {
-                _eventService.Delete(id);
-
-                return new ApiResult
-                {
-                    Success = true,
-                    StatusCode = HttpStatusCode.NoContent,
-                    Message = "Событие удалено."
-                };
+                return NoContent();
             }
             else
             {
-                return new ApiResult
-                {
-                    Success = false,
-                    StatusCode = HttpStatusCode.NotFound,
-                    Message = "Событие не найдено."
-                };
+                return BadRequest();
             }
         }
     }

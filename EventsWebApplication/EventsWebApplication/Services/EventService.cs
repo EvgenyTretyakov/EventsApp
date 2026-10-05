@@ -6,7 +6,7 @@ namespace EventsWebApplication.Services
     public class EventService : IEventService
     {
         //Коллекция для манипуляции событиями
-        private static List<Event> _events = new();
+        private List<Event> _events = new();
 
         //Метод добавления нового события
         public void Add(Event newEvnt)
@@ -18,10 +18,10 @@ namespace EventsWebApplication.Services
 
             if (sameEvent == null)
             {
-                var result = DateTime.Compare(newEvnt.StartAt, newEvnt.EndAt);
-                if (result > 0)
+                var result = DateTime.Compare(newEvnt.StartAt.Value, newEvnt.EndAt.Value);
+                if (result > 0 || result == 0)
                 {
-                    throw new Exception("Дата окончания события должна быть больше даты начала.");
+                    throw new Exception("Даты окончания и начала события не корректны.");
                 }
 
                 newEvnt.Id = Guid.NewGuid();
@@ -34,14 +34,17 @@ namespace EventsWebApplication.Services
         }
 
         //Метод удаления события
-        public void Delete(Guid id)
+        public bool Delete(Guid id)
         {
             var existEvent = _events.FirstOrDefault(x => x.Id == id);
 
             if (existEvent != null)
             {
                 _events.Remove(existEvent);
+                return true;
             }
+            
+            return false;
         }
 
         //Метод получения всех событий
@@ -60,14 +63,17 @@ namespace EventsWebApplication.Services
         public void Update(Guid id, Event newEvnt)
         {
             var oldEvnt = _events.FirstOrDefault(x => x.Id == id);
-
-            if (oldEvnt != null &&
-                (oldEvnt.Title != newEvnt.Title ||
-                 oldEvnt.Description != newEvnt.Description ||
-                 oldEvnt.StartAt != newEvnt.StartAt ||
-                 oldEvnt.EndAt != newEvnt.EndAt))
+            if (oldEvnt == null)
             {
-                var result = DateTime.Compare(newEvnt.StartAt, newEvnt.EndAt);
+                throw new Exception("Событие не найдено.");
+            }
+
+            if (oldEvnt.Title != newEvnt.Title ||
+                oldEvnt.Description != newEvnt.Description ||
+                oldEvnt.StartAt != newEvnt.StartAt ||
+                oldEvnt.EndAt != newEvnt.EndAt)
+            {
+                var result = DateTime.Compare(newEvnt.StartAt.Value, newEvnt.EndAt.Value);
                 if (result > 0)
                 {
                     throw new Exception("Дата окончания события должна быть больше даты начала.");

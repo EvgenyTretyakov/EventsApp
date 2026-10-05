@@ -9,8 +9,8 @@ namespace EventsWebApplication.Models
         public string Title { get; set; }
         public string? Description { get; set; }
         [Required]
-        public DateTime StartAt { get; set; }
+        public DateTime? StartAt { get; set; }
         [Required]
-        public DateTime EndAt { get; set; }
+        public DateTime? EndAt { get; set; }
     }
 }
