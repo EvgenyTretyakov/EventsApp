@@ -1,3 +1,4 @@
+using EventsWebApplication;
 using EventsWebApplication.Services;
 using EventsWebApplication.Services.Interfaces;
 using System.Reflection;
@@ -19,8 +20,8 @@ builder.Services.AddSwaggerGen(options =>
 
 var app = builder.Build();
 
+app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
 
 if (app.Environment.IsDevelopment())

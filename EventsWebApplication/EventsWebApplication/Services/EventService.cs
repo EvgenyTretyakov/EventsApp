@@ -24,7 +24,7 @@ namespace EventsWebApplication.Services
                     throw new Exception("Даты окончания и начала события не корректны.");
                 }
 
-                newEvnt.Id = Guid.NewGuid();
+                newEvnt.Id = newEvnt.Id != Guid.Empty ? newEvnt.Id : Guid.NewGuid();
                 _events.Add(newEvnt);
             }
             else
@@ -48,9 +48,37 @@ namespace EventsWebApplication.Services
         }
 
         //Метод получения всех событий
-        public List<Event> GetAll()
+        public PagedResult<Event> GetAll(string? title, DateTime? from, DateTime? to, int? page = 1, int? pageSize = 10)
         {
-            return _events;
+            var eventsFiltered = _events.AsEnumerable();
+
+            if (!string.IsNullOrEmpty(title))
+            {
+                eventsFiltered = _events.Where(x => x.Title.ToUpper().Contains(title.ToUpper()));
+            }
+
+            if (from.HasValue)
+            {
+                eventsFiltered.Where(x => x.StartAt.HasValue).Where(x => x.StartAt.Value == from.Value);
+            }
+
+            if (to.HasValue)
+            {
+                eventsFiltered.Where(x => x.EndAt.HasValue).Where(x => x.EndAt.Value == to.Value);
+            }
+
+            var currentPageItems = eventsFiltered
+                .Skip((page.Value - 1) * pageSize.Value)
+                .Take(pageSize.Value)
+                .ToList();
+
+            return new PagedResult<Event>
+            {
+                TotalItems = eventsFiltered.Count(),
+                Items = currentPageItems,
+                CurrentPage = page.Value,
+                CurrentPageTotalItems = currentPageItems.Count
+            };
         }
 
         //Метод получения события по идентификатору
