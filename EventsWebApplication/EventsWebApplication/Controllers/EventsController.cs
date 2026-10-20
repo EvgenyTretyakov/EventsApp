@@ -44,15 +44,15 @@ namespace EventsWebApplication.Controllers
         [HttpGet("{id:Guid}")]
         public IActionResult GetEventById(Guid id)
         {
-            var evnt = _eventService.GetEvent(id);
-
-            if (evnt != null)
+            try
             {
+                var evnt = _eventService.GetEvent(id);
+
                 return Ok(evnt);
             }
-            else
+            catch
             {
-                return NotFound();
+                throw;
             }
         }
 
@@ -102,14 +102,16 @@ namespace EventsWebApplication.Controllers
         [HttpDelete("{id:Guid}")]
         public IActionResult DeleteEvnt(Guid id)
         {
-            if (_eventService.Delete(id))
+            try
             {
-                return NoContent();
+                _eventService.Delete(id);
             }
-            else
+            catch
             {
-                return BadRequest();
+                throw;
             }
+
+            return NoContent();
         }
     }
 }

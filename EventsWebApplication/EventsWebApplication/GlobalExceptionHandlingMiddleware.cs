@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
 using EventsWebApplication.Models;
+using EventsWebApplication.Exceptions;
 
 
 namespace EventsWebApplication
@@ -51,6 +52,7 @@ namespace EventsWebApplication
             => ex switch
             {
                 ValidationException ve => StatusCodes.Status400BadRequest,
+                NotFoundException nf => StatusCodes.Status404NotFound,
                 _ => StatusCodes.Status500InternalServerError
             };
     }

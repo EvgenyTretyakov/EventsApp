@@ -1,6 +1,10 @@
-﻿using EventsWebApplication.Models;
-using EventsWebApplication.Services.Interfaces;
+﻿using System.ComponentModel.DataAnnotations;
+
+using EventsWebApplication.Models;
 using WebApp = EventsWebApplication;
+using EventsWebApplication.Exceptions;
+using EventsWebApplication.Services.Interfaces;
+
 
 namespace EventService.Tests
 {
@@ -137,7 +141,7 @@ namespace EventService.Tests
             _eventService.Delete(eventId);
 
             //Assert
-            Assert.Null(_eventService.GetEvent(eventId));
+            Assert.Throws<NotFoundException>(() => _eventService.GetEvent(eventId));
         }
 
         [Fact]
@@ -166,7 +170,7 @@ namespace EventService.Tests
             var result = _eventService.GetAll("Event1", null, null).Items;
 
             //Assert
-            Assert.NotEmpty(result);
+            Assert.Single(result, item => item.Title == "Event1");
         }
 
         [Fact]
@@ -198,8 +202,8 @@ namespace EventService.Tests
             var result2 = _eventService.GetAll(null, null, event2EndAt).Items;
 
             //Assert
-            Assert.NotEmpty(result1);
-            Assert.NotEmpty(result2);
+            Assert.True(result1.All(x => x.StartAt >= event1StartAt));
+            Assert.True(result2.All(x => x.EndAt <= event2EndAt));
         }
 
         [Theory]
@@ -233,7 +237,7 @@ namespace EventService.Tests
             {
                 _eventService.Add(item);
             }
-            var result = _eventService.GetEvent(id);
+            var result = _eventService.GetAll(null, null, null).Items?.FirstOrDefault(x => x.Id == id);
 
             //Assert
             Assert.Null(result);
@@ -261,7 +265,7 @@ namespace EventService.Tests
             eventTest.Title = newTitle;
 
             //Assert
-            Assert.Throws<Exception>(() => _eventService.Update(Guid.NewGuid(), eventTest));
+            Assert.Throws<NotFoundException>(() => _eventService.Update(Guid.NewGuid(), eventTest));
         }
 
         [Fact]
@@ -279,7 +283,7 @@ namespace EventService.Tests
             };
 
             //Act & Assert
-            Assert.Throws<Exception>(() => _eventService.Add(newEvent));
+            Assert.Throws<ValidationException>(() => _eventService.Add(newEvent));
         }
 
         [Fact]
@@ -308,7 +312,7 @@ namespace EventService.Tests
             _eventService.Add(eventAdd);
 
             //Assert
-            Assert.Throws<Exception>(() => _eventService.Update(eventId, eventUpdate));
+            Assert.Throws<ValidationException>(() => _eventService.Update(eventId, eventUpdate));
         }
     }
 }
