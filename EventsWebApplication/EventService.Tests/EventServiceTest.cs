@@ -288,6 +288,27 @@ namespace EventService.Tests
 
         [Fact]
         [Trait("Category", "Unsuccess")]
+        public void Create_SameEvent_Unsuccess()
+        {
+            //Arrange
+            var date = DateTime.Now;
+            var newEvent = new Event
+            {
+                Title = "Event1",
+                Description = string.Empty,
+                StartAt = date,
+                EndAt = date.AddDays(3)
+            };
+
+            //Act
+            _eventService.Add(newEvent);
+
+            //Assert
+            Assert.Throws<ValidationException>(() => _eventService.Add(newEvent));
+        }
+
+        [Fact]
+        [Trait("Category", "Unsuccess")]
         public void Update_EventWithInncorrectData_Unsuccess()
         {
             //Arrange

@@ -22,7 +22,7 @@ namespace EventsWebApplication.Services
             if (sameEvent == null)
             {
                 var result = DateTime.Compare(newEvnt.StartAt.Value, newEvnt.EndAt.Value);
-                if (result > 0 || result == 0)
+                if (result > 0)
                 {
                     throw new ValidationException("Даты окончания и начала события не корректны.");
                 }
@@ -56,7 +56,7 @@ namespace EventsWebApplication.Services
 
             if (!string.IsNullOrEmpty(title))
             {
-                eventsFiltered = _events.Where(x => x.Title.ToUpper().Contains(title.ToUpper()));
+                eventsFiltered = eventsFiltered.Where(x => x.Title.ToUpper().Contains(title.ToUpper()));
             }
 
             if (from.HasValue)

@@ -44,16 +44,9 @@ namespace EventsWebApplication.Controllers
         [HttpGet("{id:Guid}")]
         public IActionResult GetEventById(Guid id)
         {
-            try
-            {
-                var evnt = _eventService.GetEvent(id);
+            var evnt = _eventService.GetEvent(id);
 
-                return Ok(evnt);
-            }
-            catch
-            {
-                throw;
-            }
+            return Ok(evnt);
         }
 
         /// <summary>
@@ -63,16 +56,9 @@ namespace EventsWebApplication.Controllers
         [HttpPost]
         public IActionResult AddEvent([FromBody] Event evnt)
         {
-            try
-            {
-                _eventService.Add(evnt);
+            _eventService.Add(evnt);
 
-                return Created();
-            }
-            catch
-            {
-                throw;
-            }
+            return Created();
         }
 
         /// <summary>
@@ -83,14 +69,7 @@ namespace EventsWebApplication.Controllers
         [HttpPut("{id:Guid}")]
         public IActionResult UpdateEvent(Guid id, [FromBody] Event evnt)
         {
-            try
-            {
-                _eventService.Update(id, evnt);
-            }
-            catch
-            {
-                throw;
-            }
+            _eventService.Update(id, evnt);
 
             return NoContent();
         }
@@ -102,14 +81,7 @@ namespace EventsWebApplication.Controllers
         [HttpDelete("{id:Guid}")]
         public IActionResult DeleteEvnt(Guid id)
         {
-            try
-            {
-                _eventService.Delete(id);
-            }
-            catch
-            {
-                throw;
-            }
+            _eventService.Delete(id);
 
             return NoContent();
         }
