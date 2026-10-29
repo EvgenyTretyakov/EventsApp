@@ -1,4 +1,7 @@
-﻿using EventsWebApplication.Models;
+﻿using System.ComponentModel.DataAnnotations;
+
+using EventsWebApplication.Models;
+using EventsWebApplication.Exceptions;
 using EventsWebApplication.Services.Interfaces;
 
 namespace EventsWebApplication.Services
@@ -19,17 +22,17 @@ namespace EventsWebApplication.Services
             if (sameEvent == null)
             {
                 var result = DateTime.Compare(newEvnt.StartAt.Value, newEvnt.EndAt.Value);
-                if (result > 0 || result == 0)
+                if (result > 0)
                 {
-                    throw new Exception("Даты окончания и начала события не корректны.");
+                    throw new ValidationException("Даты окончания и начала события не корректны.");
                 }
 
-                newEvnt.Id = Guid.NewGuid();
+                newEvnt.Id = newEvnt.Id != Guid.Empty ? newEvnt.Id : Guid.NewGuid();
                 _events.Add(newEvnt);
             }
             else
             {
-                throw new Exception("Такое событие уже есть в списке!");
+                throw new ValidationException("Такое событие уже есть в списке!");
             }
         }
 
@@ -38,25 +41,59 @@ namespace EventsWebApplication.Services
         {
             var existEvent = _events.FirstOrDefault(x => x.Id == id);
 
-            if (existEvent != null)
+            if (existEvent == null)
             {
-                _events.Remove(existEvent);
-                return true;
+                throw new NotFoundException("Событие не найдено.");
             }
-            
-            return false;
+
+            return _events.Remove(existEvent);
         }
 
         //Метод получения всех событий
-        public List<Event> GetAll()
+        public PagedResult<Event> GetAll(string? title, DateTime? from, DateTime? to, int? page = 1, int? pageSize = 10)
         {
-            return _events;
+            var eventsFiltered = _events.AsEnumerable();
+
+            if (!string.IsNullOrEmpty(title))
+            {
+                eventsFiltered = eventsFiltered.Where(x => x.Title.ToUpper().Contains(title.ToUpper()));
+            }
+
+            if (from.HasValue)
+            {
+                eventsFiltered = eventsFiltered.Where(x => x.StartAt.HasValue).Where(x => x.StartAt.Value.Date >= from.Value.Date);
+            }
+
+            if (to.HasValue)
+            {
+                eventsFiltered = eventsFiltered.Where(x => x.EndAt.HasValue).Where(x => x.EndAt.Value.Date <= to.Value.Date);
+            }
+
+            var currentPageItems = eventsFiltered
+                .Skip((page.Value - 1) * pageSize.Value)
+                .Take(pageSize.Value)
+                .ToList();
+
+            return new PagedResult<Event>
+            {
+                TotalItems = eventsFiltered.Count(),
+                Items = currentPageItems,
+                CurrentPage = page.Value,
+                CurrentPageTotalItems = currentPageItems.Count
+            };
         }
 
         //Метод получения события по идентификатору
-        public Event? GetEvent(Guid id)
+        public Event GetEvent(Guid id)
         {
-            return _events.FirstOrDefault(x => x.Id == id);
+            var eventData = _events.FirstOrDefault(x => x.Id == id);
+
+            if (eventData == null)
+            {
+                throw new NotFoundException("Событие не найдено.");
+            }
+
+            return eventData;
         }
 
         //Метод изменения информации события
@@ -65,7 +102,7 @@ namespace EventsWebApplication.Services
             var oldEvnt = _events.FirstOrDefault(x => x.Id == id);
             if (oldEvnt == null)
             {
-                throw new Exception("Событие не найдено.");
+                throw new NotFoundException("Событие не найдено.");
             }
 
             if (oldEvnt.Title != newEvnt.Title ||
@@ -76,7 +113,7 @@ namespace EventsWebApplication.Services
                 var result = DateTime.Compare(newEvnt.StartAt.Value, newEvnt.EndAt.Value);
                 if (result > 0)
                 {
-                    throw new Exception("Дата окончания события должна быть больше даты начала.");
+                    throw new ValidationException("Дата окончания события должна быть больше даты начала.");
                 }
 
                 oldEvnt.Title = newEvnt.Title;

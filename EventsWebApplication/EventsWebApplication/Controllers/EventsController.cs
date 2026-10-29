@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using System.Net;
+﻿using Microsoft.AspNetCore.Mvc;
 
 using EventsWebApplication.Models;
 using EventsWebApplication.Services.Interfaces;
@@ -20,12 +18,23 @@ namespace EventsWebApplication.Controllers
         }
 
         /// <summary>
-        /// Метод возвращает список событий
+        /// Метод возвращает DTO PaginatedResult включающий:
+        /// общее количество событий, массив самих событий, номер текущей страницы, количество элементов на текущей странице
         /// </summary>
+        /// <param name="title">Поиск по названию</param>
+        /// <param name="from">События, которые начинаются не раньше указанной даты</param>
+        /// <param name="to">События, которые заканчиваются не позже указанной даты</param>
+        /// <param name="page">Страница, которую необходимо вернуть</param>
+        /// <param name="pageSize">Количество элементов на странице</param>
         [HttpGet]
-        public ActionResult<List<Event>> GetAllEvents()
+        public ActionResult<PagedResult<Event>> GetAllEvents(
+            [FromQuery] string? title = null,
+            [FromQuery] DateTime? from = null,
+            [FromQuery] DateTime? to = null,
+            [FromQuery] int? page = 1,
+            [FromQuery] int? pageSize = 10)
         {
-            return _eventService.GetAll();
+            return _eventService.GetAll(title, from, to, page, pageSize);
         }
 
         /// <summary>
@@ -37,14 +46,7 @@ namespace EventsWebApplication.Controllers
         {
             var evnt = _eventService.GetEvent(id);
 
-            if (evnt != null)
-            {
-                return Ok(evnt);
-            }
-            else
-            {
-                return NotFound();
-            }
+            return Ok(evnt);
         }
 
         /// <summary>
@@ -54,16 +56,9 @@ namespace EventsWebApplication.Controllers
         [HttpPost]
         public IActionResult AddEvent([FromBody] Event evnt)
         {
-            try
-            {
-                _eventService.Add(evnt);
+            _eventService.Add(evnt);
 
-                return Created();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return Created();
         }
 
         /// <summary>
@@ -74,14 +69,7 @@ namespace EventsWebApplication.Controllers
         [HttpPut("{id:Guid}")]
         public IActionResult UpdateEvent(Guid id, [FromBody] Event evnt)
         {
-            try
-            {
-                _eventService.Update(id, evnt);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            _eventService.Update(id, evnt);
 
             return NoContent();
         }
@@ -93,14 +81,9 @@ namespace EventsWebApplication.Controllers
         [HttpDelete("{id:Guid}")]
         public IActionResult DeleteEvnt(Guid id)
         {
-            if (_eventService.Delete(id))
-            {
-                return NoContent();
-            }
-            else
-            {
-                return BadRequest();
-            }
+            _eventService.Delete(id);
+
+            return NoContent();
         }
     }
 }
