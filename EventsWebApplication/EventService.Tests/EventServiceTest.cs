@@ -278,7 +278,7 @@ namespace EventService.Tests
             {
                 Title = "Event1",
                 Description = string.Empty,
-                StartAt = date,
+                StartAt = date.AddDays(1),
                 EndAt = date
             };
 
