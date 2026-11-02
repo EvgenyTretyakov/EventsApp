@@ -11,10 +11,12 @@ namespace EventsWebApplication.Controllers
     public class EventsController : ControllerBase
     {
         private readonly IEventService _eventService;
+        private readonly IBookingService _bookingService;
 
-        public EventsController(IEventService eventService)
+        public EventsController(IEventService eventService, IBookingService bookingService)
         {
             _eventService = eventService;
+            _bookingService = bookingService;
         }
 
         /// <summary>
@@ -84,6 +86,47 @@ namespace EventsWebApplication.Controllers
             _eventService.Delete(id);
 
             return NoContent();
+        }
+
+        /// <summary>
+        /// Метод бронирования
+        /// </summary>
+        /// <param name="id">Параметр идентификатор события</param>
+        [HttpPost("{id:Guid}/book")]
+        public async Task<IActionResult> Book(Guid id)
+        {
+            var evnt = _eventService.GetEvent(id);
+
+            var booking = await _bookingService.CreateBookingAsync(id);
+
+            if (booking == null)
+            {
+                return NotFound();
+            }
+
+            var result = Accepted(new { booking.Id, booking.EventId, booking.Status });
+            result.Location = $"/bookongs/{booking.Id}";
+
+            return result;
+        }
+
+        /// <summary>
+        /// Метод возвращает текущее состояние брони по её идентификатору
+        /// </summary>
+        /// <param name="id">Параметр идентификатор брони</param>
+        [HttpPost("/bookings/{id:Guid}")]
+        public async Task<IActionResult> GetBookings(Guid id)
+        {
+            var booking = await _bookingService.GetBookingByIdAsync(id);
+
+            if (booking == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(booking);
+            }
         }
     }
 }
