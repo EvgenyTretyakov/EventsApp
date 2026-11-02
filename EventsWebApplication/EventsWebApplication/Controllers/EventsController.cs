@@ -114,7 +114,7 @@ namespace EventsWebApplication.Controllers
         /// Метод возвращает текущее состояние брони по её идентификатору
         /// </summary>
         /// <param name="id">Параметр идентификатор брони</param>
-        [HttpPost("/bookings/{id:Guid}")]
+        [HttpGet("/bookings/{id:Guid}")]
         public async Task<IActionResult> GetBookings(Guid id)
         {
             var booking = await _bookingService.GetBookingByIdAsync(id);

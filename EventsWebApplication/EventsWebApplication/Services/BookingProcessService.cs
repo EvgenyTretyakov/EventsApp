@@ -17,19 +17,11 @@ namespace EventsWebApplication.Services
             {
                 try
                 {
-                    if (!_bookingQueue.AnyToProcess())
+                    if (_bookingQueue.TryDequeue(out var bookingId))
                     {
-                        continue;
-                    }
+                        await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
 
-                    if (_bookingQueue.TryDequeue(out var booking))
-                    {
-                        await Task.Delay(TimeSpan.FromSeconds(2), stoppingToken);
-
-                        booking.Status = BookingStatusEnum.Confirmed;
-                        booking.ProcessedAt = DateTime.Now;
-
-                        _bookingQueue.Enqueue(booking);
+                        _bookingQueue.UpdateStatus(bookingId);
                     }
                 }
                 catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
