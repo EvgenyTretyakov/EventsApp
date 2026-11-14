@@ -44,8 +44,13 @@ namespace EventsWebApplication.Services
         {
             var booking = _queue.FirstOrDefault(x => x.Id == id);
 
-            booking?.Status = BookingStatusEnum.Confirmed;
-            booking?.ProcessedAt = DateTime.Now;
+            if (booking == null)
+            {
+                throw new Exception("Бронь не найдена!");
+            }
+
+            booking.Status = BookingStatusEnum.Confirmed;
+            booking.ProcessedAt = DateTime.Now;
         }
     }
 }

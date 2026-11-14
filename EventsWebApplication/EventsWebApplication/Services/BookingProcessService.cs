@@ -30,8 +30,11 @@ namespace EventsWebApplication.Services
                 }
                 catch (Exception)
                 {
-                    throw;
+                    //to-do: логирование
+                    continue;
                 }
+
+                await Task.Delay(TimeSpan.FromSeconds(2), stoppingToken);
             }
         }
     }

@@ -19,7 +19,7 @@ namespace EventsWebApplication.Services
         {
             var evnt = _eventService.GetEvent(eventId);
 
-            await Task.Delay(1000);
+            await Task.Delay(0);
 
             var newBooking = new Booking
             {
@@ -36,7 +36,7 @@ namespace EventsWebApplication.Services
 
         public async Task<Booking?> GetBookingByIdAsync(Guid bookingId)
         {
-            await Task.Delay(1000);
+            await Task.Delay(0);
 
             var booking = _bookingQueue.GetBooking(bookingId);
 

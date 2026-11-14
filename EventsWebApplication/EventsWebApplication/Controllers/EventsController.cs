@@ -105,7 +105,7 @@ namespace EventsWebApplication.Controllers
             }
 
             var result = Accepted(new { booking.Id, booking.EventId, booking.Status });
-            result.Location = $"/bookongs/{booking.Id}";
+            result.Location = $"/bookings/{booking.Id}";
 
             return result;
         }
