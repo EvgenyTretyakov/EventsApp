@@ -1,5 +1,6 @@
 ﻿using EventsWebApplication.Enums;
 using EventsWebApplication.Models;
+using EventsWebApplication.Exceptions;
 using EventsWebApplication.Services.Interfaces;
 
 namespace EventsWebApplication.Services
@@ -9,6 +10,8 @@ namespace EventsWebApplication.Services
         private readonly IEventService _eventService;
         private readonly IBookingQueue _bookingQueue;
 
+        private readonly object _bookingLock = new object();
+
         public BookingService(IEventService eventService, IBookingQueue bookingQueue)
         {
             _eventService = eventService;
@@ -17,9 +20,17 @@ namespace EventsWebApplication.Services
 
         public async Task<Booking> CreateBookingAsync(Guid eventId)
         {
+            await Task.Delay(0);
+
             var evnt = _eventService.GetEvent(eventId);
 
-            await Task.Delay(0);
+            lock (_bookingLock)
+            {
+                if (!evnt.TryReserveSeats())
+                {
+                    throw new NoAvailableSeatsException("No available seats for this event");
+                }
+            }
 
             var newBooking = new Booking
             {
