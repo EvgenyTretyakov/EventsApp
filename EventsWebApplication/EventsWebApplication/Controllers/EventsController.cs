@@ -113,6 +113,7 @@ namespace EventsWebApplication.Controllers
         /// </summary>
         /// <param name="id">Параметр идентификатор события</param>
         [HttpPost("{id:Guid}/book")]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         public async Task<IActionResult> Book(Guid id)
         {
             var evnt = _eventService.GetEvent(id);

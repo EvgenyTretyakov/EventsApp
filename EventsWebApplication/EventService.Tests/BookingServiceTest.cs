@@ -11,7 +11,7 @@ namespace EventService.Tests
 {
     public class BookingServiceTest
     {
-        private ILogger _logger;
+        private ILogger<BookingProcessService> _logger;
         private IEventService _eventService;
         private IBookingService _bookingService;
         private IBookingQueue _bookingQueue;
@@ -399,7 +399,8 @@ namespace EventService.Tests
                 Title = "Event1",
                 Description = string.Empty,
                 StartAt = DateTime.Now,
-                EndAt = DateTime.Now.AddDays(3)
+                EndAt = DateTime.Now.AddDays(3),
+                TotalSeats = 1
             };
 
             //Act & Assert

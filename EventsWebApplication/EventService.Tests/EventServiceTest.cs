@@ -16,10 +16,10 @@ namespace EventService.Tests
         {
             return
             [
-                new Event { Id = Guid.Parse("077c6978-9d5f-4e34-926a-15b003327115"), Title = "Event1", Description = string.Empty, StartAt = DateTime.Now, EndAt = DateTime.Now.AddDays(2) },
-                new Event { Title = "Event2", Description = string.Empty, StartAt = DateTime.Now.AddDays(1), EndAt = DateTime.Now.AddDays(3) },
-                new Event { Id = Guid.Parse("177c6978-9d5f-4e34-926a-15b003327115"), Title = "Event3", Description = string.Empty, StartAt = DateTime.Now.AddDays(2), EndAt = DateTime.Now.AddDays(4) },
-                new Event { Title = "Event4", Description = string.Empty, StartAt = DateTime.Now.AddDays(3), EndAt = DateTime.Now.AddDays(5) },
+                new Event { Id = Guid.Parse("077c6978-9d5f-4e34-926a-15b003327115"), Title = "Event1", Description = string.Empty, StartAt = DateTime.Now, EndAt = DateTime.Now.AddDays(2), TotalSeats = 1 },
+                new Event { Title = "Event2", Description = string.Empty, StartAt = DateTime.Now.AddDays(1), EndAt = DateTime.Now.AddDays(3), TotalSeats = 1 },
+                new Event { Id = Guid.Parse("177c6978-9d5f-4e34-926a-15b003327115"), Title = "Event3", Description = string.Empty, StartAt = DateTime.Now.AddDays(2), EndAt = DateTime.Now.AddDays(4), TotalSeats = 1 },
+                new Event { Title = "Event4", Description = string.Empty, StartAt = DateTime.Now.AddDays(3), EndAt = DateTime.Now.AddDays(5), TotalSeats = 1 },
             ];
         }
 
@@ -38,7 +38,8 @@ namespace EventService.Tests
                 Title = "Event1",
                 Description = string.Empty,
                 StartAt = DateTime.Now,
-                EndAt = DateTime.Now.AddDays(3)
+                EndAt = DateTime.Now.AddDays(3),
+                TotalSeats = 1
             };
 
             //Act
@@ -62,7 +63,8 @@ namespace EventService.Tests
                     Title = "Event1",
                     Description = string.Empty,
                     StartAt = DateTime.Now,
-                    EndAt = DateTime.Now.AddDays(3)
+                    EndAt = DateTime.Now.AddDays(3),
+                    TotalSeats = 1
                 });
             var resultCount = _eventService.GetAll(null, null, null).TotalItems;
 
@@ -82,7 +84,8 @@ namespace EventService.Tests
                 Title = "Event1",
                 Description = string.Empty,
                 StartAt = DateTime.Now,
-                EndAt = DateTime.Now.AddDays(3)
+                EndAt = DateTime.Now.AddDays(3),
+                TotalSeats = 1
             };
 
             //Act
@@ -105,7 +108,8 @@ namespace EventService.Tests
                 Title = "Event1",
                 Description = string.Empty,
                 StartAt = DateTime.Now,
-                EndAt = DateTime.Now.AddDays(3)
+                EndAt = DateTime.Now.AddDays(3),
+                TotalSeats = 1
             };
             var newTitle = "Event11";
 
@@ -133,7 +137,8 @@ namespace EventService.Tests
                 Title = "Event1",
                 Description = string.Empty,
                 StartAt = DateTime.Now,
-                EndAt = DateTime.Now.AddDays(3)
+                EndAt = DateTime.Now.AddDays(3),
+                TotalSeats = 1
             };
 
             //Act
@@ -154,14 +159,16 @@ namespace EventService.Tests
                 Title = "Event1",
                 Description = string.Empty,
                 StartAt = DateTime.Now,
-                EndAt = DateTime.Now.AddDays(3)
+                EndAt = DateTime.Now.AddDays(3),
+                TotalSeats = 1
             };
             var event2 = new Event
             {
                 Title = "Event2",
                 Description = string.Empty,
                 StartAt = DateTime.Now,
-                EndAt = DateTime.Now.AddDays(3)
+                EndAt = DateTime.Now.AddDays(3),
+                TotalSeats = 1
             };
 
             //Act
@@ -185,14 +192,16 @@ namespace EventService.Tests
                 Title = "Event1",
                 Description = string.Empty,
                 StartAt = event1StartAt,
-                EndAt = DateTime.Now.AddDays(2)
+                EndAt = DateTime.Now.AddDays(2),
+                TotalSeats = 1
             };
             var event2 = new Event
             {
                 Title = "Event2",
                 Description = string.Empty,
                 StartAt = DateTime.Now.AddDays(1),
-                EndAt = event2EndAt
+                EndAt = event2EndAt,
+                TotalSeats = 1
             };
 
             //Act
@@ -255,7 +264,8 @@ namespace EventService.Tests
                 Title = "Event1",
                 Description = string.Empty,
                 StartAt = DateTime.Now,
-                EndAt = DateTime.Now.AddDays(3)
+                EndAt = DateTime.Now.AddDays(3),
+                TotalSeats = 1
             };
             var newTitle = "Event11";
 
@@ -297,7 +307,8 @@ namespace EventService.Tests
                 Title = "Event1",
                 Description = string.Empty,
                 StartAt = date,
-                EndAt = date.AddDays(3)
+                EndAt = date.AddDays(3),
+                TotalSeats = 1
             };
 
             //Act
@@ -319,14 +330,16 @@ namespace EventService.Tests
                 Title = "Event1",
                 Description = string.Empty,
                 StartAt = DateTime.Now,
-                EndAt = DateTime.Now.AddDays(3)
+                EndAt = DateTime.Now.AddDays(3),
+                TotalSeats = 1
             };
             var eventUpdate = new Event
             {
                 Title = "Event1",
                 Description = string.Empty,
                 StartAt = DateTime.Now,
-                EndAt = DateTime.Now.AddDays(-3)
+                EndAt = DateTime.Now.AddDays(-3),
+                TotalSeats = 1
             };
 
             //Act

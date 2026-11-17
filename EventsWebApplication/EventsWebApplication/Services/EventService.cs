@@ -28,7 +28,7 @@ namespace EventsWebApplication.Services
                     throw new ValidationException("Даты окончания и начала события не корректны.");
                 }
 
-                if (newEvnt.TotalSeats < 0)
+                if (newEvnt.TotalSeats <= 0)
                 {
                     throw new ValidationException("Значение общего количества мест на событии должно быть больше 0.");
                 }

@@ -48,22 +48,15 @@ namespace EventsWebApplication.Services
         {
             await Task.Delay(TimeSpan.FromSeconds(1), stoppingToken);
 
-            await _processingSemaphore.WaitAsync();
+            await _processingSemaphore.WaitAsync(stoppingToken);
 
-            var evnt = _eventService.GetEvent(booking.EventId);
+            Event evnt = null;
 
             try
             {
-                if (evnt == null)
-                {
-                    booking.Reject();
+                evnt = _eventService.GetEvent(booking.EventId);
 
-                    _logger.LogInformation("Warning");
-                }
-                else
-                {
-                    booking.Confirm();
-                }
+                booking.Confirm();
 
                 _bookingQueue.Update(booking);
             }
@@ -76,8 +69,13 @@ namespace EventsWebApplication.Services
                 booking.Reject();
                 _bookingQueue.Update(booking);
 
-                evnt.ReleaseSeats();
-                _eventService.Update(evnt.Id, evnt);
+                if (evnt != null)
+                {
+                    evnt.ReleaseSeats();
+                    _eventService.Update(evnt.Id, evnt);
+                }
+
+                _logger.LogInformation("Warning");
             }
             finally
             {

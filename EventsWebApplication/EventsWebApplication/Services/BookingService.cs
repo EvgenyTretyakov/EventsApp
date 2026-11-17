@@ -23,6 +23,7 @@ namespace EventsWebApplication.Services
             await Task.Delay(0);
 
             var evnt = _eventService.GetEvent(eventId);
+            Booking newBooking = null;
 
             lock (_bookingLock)
             {
@@ -30,18 +31,18 @@ namespace EventsWebApplication.Services
                 {
                     throw new NoAvailableSeatsException("No available seats for this event");
                 }
+
+                newBooking = new Booking
+                {
+                    Id = Guid.NewGuid(),
+                    EventId = evnt.Id,
+                    Status = BookingStatusEnum.Pending,
+                    CreatedAt = DateTime.Now
+                };
+
+                _bookingQueue.Enqueue(newBooking);
             }
-
-            var newBooking = new Booking
-            {
-                Id = Guid.NewGuid(),
-                EventId = evnt.Id,
-                Status = BookingStatusEnum.Pending,
-                CreatedAt = DateTime.Now
-            };
-
-            _bookingQueue.Enqueue(newBooking);
-
+            
             return newBooking;
         }
 
