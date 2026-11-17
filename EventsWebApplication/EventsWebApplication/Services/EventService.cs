@@ -17,7 +17,8 @@ namespace EventsWebApplication.Services
             var sameEvent = _events.FirstOrDefault(x =>
                 x.Title == newEvnt.Title &&
                 x.StartAt == newEvnt.StartAt &&
-                x.EndAt == newEvnt.EndAt);
+                x.EndAt == newEvnt.EndAt &&
+                x.TotalSeats == newEvnt.TotalSeats);
 
             if (sameEvent == null)
             {
@@ -25,6 +26,11 @@ namespace EventsWebApplication.Services
                 if (result > 0)
                 {
                     throw new ValidationException("Даты окончания и начала события не корректны.");
+                }
+
+                if (newEvnt.TotalSeats <= 0)
+                {
+                    throw new ValidationException("Значение общего количества мест на событии должно быть больше 0.");
                 }
 
                 newEvnt.Id = newEvnt.Id != Guid.Empty ? newEvnt.Id : Guid.NewGuid();
@@ -108,7 +114,8 @@ namespace EventsWebApplication.Services
             if (oldEvnt.Title != newEvnt.Title ||
                 oldEvnt.Description != newEvnt.Description ||
                 oldEvnt.StartAt != newEvnt.StartAt ||
-                oldEvnt.EndAt != newEvnt.EndAt)
+                oldEvnt.EndAt != newEvnt.EndAt ||
+                oldEvnt.AvailableSeats != newEvnt.AvailableSeats)
             {
                 var result = DateTime.Compare(newEvnt.StartAt.Value, newEvnt.EndAt.Value);
                 if (result > 0)
@@ -120,6 +127,7 @@ namespace EventsWebApplication.Services
                 oldEvnt.Description = newEvnt.Description;
                 oldEvnt.StartAt = newEvnt.StartAt;
                 oldEvnt.EndAt = newEvnt.EndAt;
+                oldEvnt.AvailableSeats = newEvnt.AvailableSeats;
             }
         }
     }

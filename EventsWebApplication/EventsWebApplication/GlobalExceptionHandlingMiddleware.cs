@@ -53,6 +53,7 @@ namespace EventsWebApplication
             {
                 ValidationException ve => StatusCodes.Status400BadRequest,
                 NotFoundException nf => StatusCodes.Status404NotFound,
+                NoAvailableSeatsException na => StatusCodes.Status409Conflict,
                 _ => StatusCodes.Status500InternalServerError
             };
     }

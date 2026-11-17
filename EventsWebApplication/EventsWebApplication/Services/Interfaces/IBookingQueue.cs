@@ -7,7 +7,8 @@ namespace EventsWebApplication.Services.Interfaces
         void Enqueue(Booking booking);
         bool TryDequeue(out Guid bookingId);
         Booking GetBooking(Guid id);
-        bool AnyToProcess();
         void UpdateStatus(Guid id);
+        void Update(Booking booking);
+        IEnumerable<Booking> GetPending();
     }
 }
